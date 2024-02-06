@@ -19,6 +19,7 @@ const useAuth = (): boolean => {
 
 export const logout = (redirectTo: NavigateFunction) => {
   localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
   redirectTo("/login");
 };
 
