@@ -1,4 +1,3 @@
-import { jwtDecode } from "jwt-decode";
 import { NavigateFunction } from "react-router-dom";
 
 const useAuth = (): boolean => {
@@ -8,10 +7,7 @@ const useAuth = (): boolean => {
     return false;
   }
   if (accessToken) {
-    const decoded = jwtDecode(accessToken);
-    if (decoded) {
-      return true;
-    }
+    return true;
   }
 
   return false;
@@ -20,6 +16,9 @@ const useAuth = (): boolean => {
 export const logout = (redirectTo: NavigateFunction) => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("expire_refresh_token");
+  localStorage.removeItem("expire_access_token");
   redirectTo("/login");
 };
 

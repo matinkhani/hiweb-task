@@ -3,20 +3,18 @@ import loginImage from "../assets/login.png";
 import HiwebImage from "../assets/hiweb.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../ReduxToolkit/Store";
 import Loading from "./Loading";
 import LoginForm from "./LoginForm";
 import Success from "./Success";
-import { getUserName } from "../ReduxToolkit/Reducer";
 
 export default function Login() {
   const [passWord, setPassWord] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
 
-  const select = useSelector((state: RootState) => state);
-  const dispatch = useDispatch();
+  const userName = useSelector((state: RootState) => state.userName);
 
   let accessToken = localStorage.getItem("accessToken");
 
@@ -29,7 +27,7 @@ export default function Login() {
       const response = await axios.post(
         "https://taskapi.hiweb.ir/api/Security/UserLogin/Login",
         {
-          userName: select.userName,
+          userName: userName,
           passWord: passWord,
         },
         {
@@ -48,51 +46,24 @@ export default function Login() {
         "refreshToken",
         data.data.accessToken?.refresh_token
       );
-      navigate("/products");
-      console.log(data);
-      console.log("accessToken", data.data.accessToken?.access_token);
-      console.log("refreshToken", data.data.accessToken?.refresh_token);
-    } catch (error) {
-      // do not forgot to error handling!!
-      console.error("Error:", error);
-      dispatch(getUserName(""));
-      setLoading(false);
-      setPassWord("");
-      alert("مشکلی پیش آمده لظفا دوباره تلاش کنید");
-    }
-  };
-
-  let refreshToken = localStorage.getItem("refreshToken");
-
-  const HandleRefreshToken = async () => {
-    console.log("start refreshing token");
-    try {
-      const response = await axios.post(
-        "https://taskapi.hiweb.ir/api/Security/UserLogin/RefreshToken",
-        {
-          userName: select.userName,
-          refreshToken: refreshToken,
-        },
-        {
-          headers: {
-            accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data = await response.data;
-      localStorage.setItem("accessToken", data.data.accessToken?.access_token);
+      localStorage.setItem("userName", userName);
       localStorage.setItem(
-        "refreshToken",
-        data.data.accessToken?.refresh_token
+        "expireRefreshToken",
+        data.data.accessToken.expire_refresh_token
       );
+      localStorage.setItem(
+        "expireAccessToken",
+        data.data.accessToken.expire_access_token
+      );
+      navigate("/");
       console.log(data);
       console.log("accessToken", data.data.accessToken?.access_token);
       console.log("refreshToken", data.data.accessToken?.refresh_token);
     } catch (error) {
       // do not forgot to error handling!!
       console.error("Error:", error);
+      setLoading(false);
+      alert("مشکلی پیش آمده لطفا دوباره تلاش کنید");
     }
   };
 

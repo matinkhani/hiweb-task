@@ -10,7 +10,7 @@ export default function ProductsHeader({
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const select = useSelector((state: RootState) => state);
+  const userName = useSelector((state: RootState) => state.userName);
   const navigate = useNavigate();
 
   return (
@@ -26,7 +26,7 @@ export default function ProductsHeader({
           <img src={LogoutImage} alt="logout" />
         </div>
         <div className="min-w-[136px] h-full flex items-center justify-center text-base font-normal text-[#5C5C5C]">
-          {select.userName}
+          {userName}
         </div>
         <button
           onClick={() => setOpen(true)}

@@ -3,5 +3,5 @@ import { Navigate, Outlet } from "react-router-dom";
 
 export default function PublicRoute() {
   const isLoggedIn = useAuth();
-  return isLoggedIn ? <Navigate to="/products" /> : <Outlet />;
+  return isLoggedIn ? <Navigate to="/" /> : <Outlet />;
 }

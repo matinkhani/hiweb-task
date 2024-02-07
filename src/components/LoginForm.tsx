@@ -12,7 +12,7 @@ export default function LoginForm({
   setPassWord: React.Dispatch<React.SetStateAction<string>>;
   HandleLoginRequest: () => Promise<void>;
 }) {
-  const select = useSelector((state: RootState) => state);
+  const userName = useSelector((state: RootState) => state.userName);
   const dispatch = useDispatch();
 
   return (
@@ -26,7 +26,7 @@ export default function LoginForm({
           placeholder="نام کاربری..."
           className="h-[48px] w-full rounded-lg pr-4 text-sm font-normal outline-none border border-[#9A9A9A]"
           dir="rtl"
-          value={select.userName}
+          value={userName}
           onChange={(e) => {
             dispatch(getUserName(e.target.value));
           }}
