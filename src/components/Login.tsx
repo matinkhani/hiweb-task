@@ -21,49 +21,59 @@ export default function Login() {
   const navigate = useNavigate();
 
   const HandleLoginRequest = async () => {
-    console.log("start logging in");
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "https://taskapi.hiweb.ir/api/Security/UserLogin/Login",
-        {
-          userName: userName,
-          passWord: passWord,
-        },
-        {
-          headers: {
-            accept: "application/json",
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
+    if (passWord !== "" && userName !== "") {
+      console.log("start logging in");
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          "https://taskapi.hiweb.ir/api/Security/UserLogin/Login",
+          {
+            userName: userName,
+            passWord: passWord,
           },
-        }
-      );
+          {
+            headers: {
+              accept: "application/json",
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      setSuccess(true);
-      const data = await response.data;
-      localStorage.setItem("accessToken", data.data.accessToken?.access_token);
-      localStorage.setItem(
-        "refreshToken",
-        data.data.accessToken?.refresh_token
-      );
-      localStorage.setItem("userName", userName);
-      localStorage.setItem(
-        "expireRefreshToken",
-        data.data.accessToken.expire_refresh_token
-      );
-      localStorage.setItem(
-        "expireAccessToken",
-        data.data.accessToken.expire_access_token
-      );
-      navigate("/");
-      console.log(data);
-      console.log("accessToken", data.data.accessToken?.access_token);
-      console.log("refreshToken", data.data.accessToken?.refresh_token);
-    } catch (error) {
-      // do not forgot to error handling!!
-      console.error("Error:", error);
-      setLoading(false);
-      alert("مشکلی پیش آمده لطفا دوباره تلاش کنید");
+        setSuccess(true);
+        const data = await response.data;
+        localStorage.setItem(
+          "accessToken",
+          data.data.accessToken?.access_token
+        );
+        localStorage.setItem(
+          "refreshToken",
+          data.data.accessToken?.refresh_token
+        );
+        localStorage.setItem("userName", userName);
+        localStorage.setItem(
+          "expireRefreshToken",
+          data.data.accessToken.expire_refresh_token
+        );
+        localStorage.setItem(
+          "expireAccessToken",
+          data.data.accessToken.expire_access_token
+        );
+        navigate("/");
+        console.log(data);
+        console.log("accessToken", data.data.accessToken.access_token);
+        console.log("refreshToken", data.data.accessToken.refresh_token);
+      } catch (error: any) {
+        console.error("Error:", error);
+        setLoading(false);
+        if (error.response.status === 400) {
+          alert("نام کاربری یا کلمه عبور اشتباه است");
+        } else {
+          alert("مشکلی پیش آمده لطفا دوباره تلاش کنید");
+        }
+      }
+    } else {
+      alert("لطفا نام کاربری و رمز عبور خود را وارد نمایید");
     }
   };
 

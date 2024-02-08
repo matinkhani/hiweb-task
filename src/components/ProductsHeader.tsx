@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import LogoutImage from "../assets/logout.svg";
 import PlusImage from "../assets/plus.svg";
 import { RootState } from "../ReduxToolkit/Store";
-import { logout } from "../PathRestriction/useAuth/useAuth";
+import { logout } from "./logOut";
 import { useNavigate } from "react-router-dom";
 
 export default function ProductsHeader({

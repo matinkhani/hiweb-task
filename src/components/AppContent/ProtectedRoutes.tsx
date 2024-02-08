@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { getLocalTime } from "../../utils/getLocalTime";
 import Loading from "../Loading";
+import { useDispatch } from "react-redux";
+import { checkingLoggedIn } from "../../ReduxToolkit/Reducer";
 
 export default function ProtectedRoutes() {
   const userName = localStorage.getItem("userName");
@@ -11,9 +13,14 @@ export default function ProtectedRoutes() {
   const expireAccessToken = localStorage.getItem("expireAccessToken");
   const [loggedIn, setLoggedIn] = useState<undefined | boolean>();
 
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const checkLogin = async () => {
     if (refreshToken === null || userName === null) {
       setLoggedIn(false);
+      dispatch(checkingLoggedIn(false));
     } else {
       const refreshTokenExpireDate = new Date(expireRefreshToken as string);
       const localTime = new Date(getLocalTime());
@@ -24,6 +31,7 @@ export default function ProtectedRoutes() {
         localStorage.removeItem("expireRefreshToken");
         localStorage.removeItem("expireAccessToken");
         setLoggedIn(false);
+        dispatch(checkingLoggedIn(false));
       } else {
         const accessTokenExpireDate = new Date(expireAccessToken as string);
         if (accessTokenExpireDate < localTime) {
@@ -45,19 +53,22 @@ export default function ProtectedRoutes() {
             const data = await response.data;
             localStorage.setItem(
               "accessToken",
-              data.data.accessToken.access_token
+              data.data.accessToken?.access_token
             );
             localStorage.setItem(
               "expireAccessToken",
-              data.data.accessToken.expire_access_token
+              data.data.accessToken?.expire_access_token
             );
             setLoggedIn(true);
+            dispatch(checkingLoggedIn(true));
           } catch (error) {
             console.error("Error :", error);
             setLoggedIn(false);
+            navigate("/login");
           }
         } else {
           setLoggedIn(true);
+          dispatch(checkingLoggedIn(true));
         }
       }
     }
@@ -72,6 +83,6 @@ export default function ProtectedRoutes() {
   ) : loggedIn === undefined ? (
     <Loading />
   ) : (
-    <Navigate to={"/login"} />
+    loggedIn === false && <Navigate to={"/login"} />
   );
 }

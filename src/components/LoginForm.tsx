@@ -45,6 +45,8 @@ export default function LoginForm({
           onChange={(e) => {
             setPassWord(e.target.value);
           }}
+          maxLength={6}
+          required
         />
       </div>
       <div className="w-full h-[28px] flex justify-end gap-2 max-sm:w-[260px]">
